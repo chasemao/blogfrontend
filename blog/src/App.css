@@ -36,3 +36,18 @@
   text-align: center;
   margin-top: 50px;
 }
+
+.link-list-item {
+  margin-bottom: 10px;
+  display: block;
+  padding: 10px;
+  border-radius: 5px;
+  color: #000;
+  text-decoration: none;
+  transition: color 0.3s ease, background-color 0.3s ease; /* Add background-color transition */
+  cursor: pointer; /* Change cursor style to pointer */
+}
+
+.link-list-item:hover {
+  background-color: #f5f5f5; /* Lighten background color on hover */
+}

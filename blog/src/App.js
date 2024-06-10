@@ -24,7 +24,7 @@ function ArticalList() {
       <div className="App-left">
         {list.map((item, index) => (
           <div>
-            <Link to={`/article/${item.id}`} key={index}>
+            <Link className="link-list-item" to={`/article/${item.id}`} key={index} target="_blank">
               {item.title}
             </Link>
           </div>
