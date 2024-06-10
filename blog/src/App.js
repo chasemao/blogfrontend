@@ -11,8 +11,9 @@ function ArticalList() {
   useEffect(() => {
     axios.get('/api/article/list')
       .then(response => {
-        console.log(response.data);
-        setList(response.data);
+        if (response.data != null) {
+          setList(response.data);
+        }
       })
       .catch(error => {
         console.error('There was an error fetching the list!', error);
@@ -36,15 +37,24 @@ function ArticalList() {
   );
 }
 
+function convertToHTML(str) {
+  if (str == null) {
+    return ""
+  }
+  // Replace newline characters with <p> tags
+  const htmlString = str.replace(/\n/g, '</p><p>');
+  
+  // Wrap the entire string with <p> tags
+  return `<p>${htmlString}</p>`;
+}
+
 function ArticleDetail() {
-  console.log('ArticleDetail');
   const { id } = useParams(); // Get the article ID from the route parameters
   const [article, setArticle] = useState({});
 
   useEffect(() => {
     axios.get(`/api/article/${id}`)
       .then(response => {
-        console.log(response.data);
         setArticle(response.data);
       })
       .catch(error => {
@@ -56,10 +66,18 @@ function ArticleDetail() {
     <div className="App-body">
       <div className="App-left">
         <h2>{article.title}</h2>
-        <p>{article.content}</p>
+        <div dangerouslySetInnerHTML={{ __html: convertToHTML(article.content) }} />
       </div>
     </div>
   );
+}
+
+function NotFound() {
+  return (
+    <div className="not-found">
+      PAGE NOT FOUND
+    </div>
+  )
 }
 
 function App() {
@@ -67,12 +85,15 @@ function App() {
     // why use BrowserRouter, because Link component relay on it
     <div className="App">
       <header className="App-header">
-        <h1>{header}</h1>
+        <a href="/" style={{ textDecoration: 'none', color: 'inherit' }}>
+          <h1>{header}</h1>
+        </a>
       </header>
         <BrowserRouter>
           <Routes>
             <Route path="/article/:id" element={<ArticleDetail />} />
             <Route path="" element={<ArticalList />} />
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
     </div>

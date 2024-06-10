@@ -2,6 +2,14 @@ import express from 'express';
 const app = express();
 const port = 5000;
 
+app.use((req, res, next) => {
+  const now = new Date();
+  const localTime = now.toLocaleString('en-US', { timeZone: 'Asia/Shanghai' });
+  const milliseconds = now.getMilliseconds().toString().padStart(3, '0');
+  console.log(`[${localTime}.${milliseconds}] ${req.method} ${req.path}`);
+  next();
+});
+
 // Serve static files from the React
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -10,17 +18,11 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 app.use(express.static(path.join(__dirname, 'blog/build')));
 
-app.get('/article/*', (req, res) => {
-  console.log('match /artcile/*');
-  res.sendFile(path.join(__dirname, 'blog/build', 'index.html'));
-});
-
 import fetch from 'node-fetch';
 app.get('/api/article/list', async (req, res) => {
   try {
     const response = await fetch('http://localhost:6666/api/v1/article/list');
     const data = await response.json();
-    console.log(data);
     res.json(data);
   } catch (error) {
     console.error('Error fetching data:', error);
@@ -30,10 +32,8 @@ app.get('/api/article/list', async (req, res) => {
 app.get('/api/article/:id', async (req, res) => {
   try {
     const id = req.params.id; // Get the article ID from the route parameters
-    console.log("id=", id);
     const response = await fetch('http://localhost:6666/api/v1/article/' + id);
     const data = await response.json();
-    console.log(data);
     res.json(data);
   } catch (error) {
     console.error('Error fetching data:', error);
@@ -60,8 +60,7 @@ app.get('/api/v1/article/list', async (req, res) => {
 // upper is for mock
 
 app.get('*', (req, res) => {
-  console.log("404 NOT FOUND");
-  res.status(404).send('Page Not Found');
+  res.sendFile(path.join(__dirname, 'blog/build', 'index.html'));
 });
 
 app.listen(port, () => {
