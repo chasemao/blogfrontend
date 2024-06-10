@@ -1,0 +1,32 @@
+.App {
+  text-align: center;
+}
+
+.App-header {
+  background-color: #282c34;
+  padding: 20px;
+  color: white;
+}
+
+.App-body {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  width: 80%;
+  margin: 0 auto;
+}
+
+.App-left {
+  flex: 0 0 70%;
+  padding: 10px;
+  text-align: left; /* Align text to the left */
+  line-height: 2; /* Double line spacing */
+}
+
+.App-right {
+  flex: 0 0 30%;
+  padding: 10px;
+  text-align: left; /* Align text to the left */
+  line-height: 2; /* Double line spacing */
+  border-left: 1px dotted #000;
+}
