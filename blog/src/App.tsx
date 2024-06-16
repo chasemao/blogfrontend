@@ -51,11 +51,22 @@ function convertToHTML(str: string | null | undefined): string {
   if (!str) {
     return "";
   }
+
   // Replace newline characters with <p> tags
   const htmlString = str.replace(/\n/g, '</p><p>');
 
   // Wrap the entire string with <p> tags
-  return `<p>${htmlString}</p>`;
+  const wrappedHTML = `<p>${htmlString}</p>`;
+
+  // Add CSS to preserve leading spaces
+  const styledHTML = `<style>
+    p {
+      white-space: pre-wrap;
+    }
+  </style>
+  ${wrappedHTML}`;
+
+  return styledHTML;
 }
 
 function ArticleDetail() {
