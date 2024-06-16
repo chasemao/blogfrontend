@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link, BrowserRouter, Routes, Route, useParams } from 'react-router-dom';
+import { Link, BrowserRouter, Routes, Route, useParams, useNavigate  } from 'react-router-dom';
 import axios from 'axios';
 import './App.css';
 import { header, introduction } from './staticData'; // Assuming staticData.js exports are TypeScript compatible
@@ -17,7 +17,7 @@ function ArticalList() {
       .then(response => {
         console.log(response);
         if (!response || !response.data || response.data.code !== 0) {
-          console.error('Error fetching the article:', response.data);
+          console.error('Error fetching the list: ', response.data);
           return;
         }
         if (response.data.data) {
@@ -61,6 +61,7 @@ function convertToHTML(str: string | null | undefined): string {
 function ArticleDetail() {
   const { title } = useParams<{ title: string }>(); // Define type for title as string
   const [article, setArticle] = useState<Article>({ title: '', content: '' });
+  const [error, setError] = useState<boolean>(false);
 
   useEffect(() => {
     axios.post<{ code: number; data: Article }>('/api/article/get', {
@@ -68,7 +69,8 @@ function ArticleDetail() {
     })
       .then(response => {
         if (!response || !response.data || response.data.code !== 0) {
-          console.error('Error fetching the article:', response.data);
+          console.error('Error fetching the article: ', response.data);
+          setError(true);
           return;
         }
         if (response.data.data) {
@@ -77,8 +79,15 @@ function ArticleDetail() {
       })
       .catch(error => {
         console.error('There was an error fetching the article!', error);
+        setError(true);
       });
   }, [title]);
+
+  if (error) {
+    return (
+      <NotFound />
+    );
+  }
 
   return (
     <div className="App-body">
@@ -93,7 +102,7 @@ function ArticleDetail() {
 function NotFound() {
   return (
     <div className="not-found">
-      PAGE NOT FOUND
+      Page not found <a href='/'>back to front page</a>
     </div>
   )
 }
