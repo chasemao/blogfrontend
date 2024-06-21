@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link, BrowserRouter, Routes, Route, useParams, useNavigate  } from 'react-router-dom';
+import { Link, BrowserRouter, Routes, Route, useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './App.css';
 import { header, introduction } from './staticData'; // Assuming staticData.js exports are TypeScript compatible
@@ -101,7 +101,7 @@ function ArticleDetail() {
 
   if (error) {
     return (
-      <NotFound />
+      <RedirectToNotFound />
     );
   }
 
@@ -147,6 +147,14 @@ function NotFound() {
   )
 }
 
+function RedirectToNotFound() {
+  const navigate = useNavigate();
+  useEffect(() => {
+    navigate("/404");
+  });
+  return null;
+}
+
 function App() {
   return (
     <div className="App">
@@ -157,9 +165,10 @@ function App() {
       </header>
       <BrowserRouter>
         <Routes>
-          <Route path="" element={<ArticalList />} />
+          <Route path="/" element={<ArticalList />} />
           <Route path="/article/:title" element={<ArticleDetail />} />
-          <Route path="*" element={<NotFound />} />
+          <Route path="/404" element={<NotFound />} />
+          <Route path="*" element={<RedirectToNotFound />} />
         </Routes>
       </BrowserRouter>
     </div>
