@@ -16,19 +16,27 @@
   margin: 0 auto;
 }
 
-.App-left {
+.App-list {
   flex: 0 0 70%;
   padding: 10px;
   text-align: left; /* Align text to the left */
   line-height: 2; /* Double line spacing */
 }
 
-.App-right {
+.App-introduction {
   flex: 0 0 30%;
   padding: 10px;
   text-align: left; /* Align text to the left */
   line-height: 2; /* Double line spacing */
   border-left: 1px dotted #000;
+}
+
+.App-detail {
+  flex: 0 0 70%;
+  padding: 10px;
+  text-align: left; /* Align text to the left */
+  line-height: 2; /* Double line spacing */
+  overflow-x: auto; /* Enable horizontal scrolling if content exceeds max-width */
 }
 
 .not-found {
@@ -38,16 +46,30 @@
 }
 
 .link-list-item {
-  margin-bottom: 10px;
-  display: block;
+  display: flex;
   padding: 10px;
-  border-radius: 5px;
-  color: #000;
-  text-decoration: none;
   transition: color 0.3s ease, background-color 0.3s ease; /* Add background-color transition */
   cursor: pointer; /* Change cursor style to pointer */
+  align-items: center;
 }
 
 .link-list-item:hover {
   background-color: #f5f5f5; /* Lighten background color on hover */
 }
+
+.link-list-item-title {
+  flex: 0 0 70%;
+  color: #000;
+  padding: 10px;
+  text-decoration: none;
+}
+
+.link-list-item-ctime {
+  flex: 0 0 30%;
+  color: #aaa; 
+  padding: 10px;
+  font-size: small;
+  text-align: center;
+}
+
+

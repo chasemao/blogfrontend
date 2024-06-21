@@ -20,6 +20,57 @@ app.use((req, res, next) => {
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 app.use(express.static(path.join(__dirname, 'blog/build')));
+app.get('/sitemap.txt', async (req, res) => {
+    try {
+        const response = await fetch('http://localhost:6666/api/v1/article/list', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        });
+        if (!response.ok) {
+            throw new Error('Failed to fetch data');
+        }
+        const data = await response.json(); // Type assertion
+        const articleTitles = data.data.map(article => `${req.protocol}://${req.get('host')}/article/` + article.title).join('\n');
+        res.setHeader('Content-Type', 'text/plain');
+        res.send(articleTitles);
+    }
+    catch (error) {
+        console.error('Error fetching data:', error);
+        res.status(500).json({ error: 'Error fetching data' });
+    }
+});
+app.get('/article/static/:image', async (req, res) => {
+    console.log('test');
+    try {
+        const { image } = req.params;
+        const response = await fetch('http://localhost:6666/api/v1/image/get', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ image })
+        });
+        if (!response.ok) {
+            throw new Error('Failed to fetch data');
+        }
+        // Check if response body exists and is readable
+        if (response.body && typeof response.body.pipe === 'function') {
+            // Set content type based on image type
+            res.setHeader('Content-Type', response.headers.get('Content-Type') || 'image/jpeg');
+            // Stream image data to client response
+            response.body.pipe(res);
+        }
+        else {
+            throw new Error('Failed to stream image data');
+        }
+    }
+    catch (error) {
+        console.error('Error fetching data:', error);
+        res.status(500).json({ error: 'Error fetching data' });
+    }
+});
 // API routes
 app.post('/api/article/list', async (req, res) => {
     try {
@@ -29,6 +80,9 @@ app.post('/api/article/list', async (req, res) => {
                 'Content-Type': 'application/json'
             },
         });
+        if (!response.ok) {
+            throw new Error('Failed to fetch data');
+        }
         const data = await response.json();
         res.json(data);
     }
@@ -47,6 +101,9 @@ app.post('/api/article/get', async (req, res) => {
             },
             body: JSON.stringify({ title })
         });
+        if (!response.ok) {
+            throw new Error('Failed to fetch data');
+        }
         const data = await response.json();
         res.json(data);
     }

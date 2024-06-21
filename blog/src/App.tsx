@@ -3,9 +3,13 @@ import { Link, BrowserRouter, Routes, Route, useParams, useNavigate  } from 'rea
 import axios from 'axios';
 import './App.css';
 import { header, introduction } from './staticData'; // Assuming staticData.js exports are TypeScript compatible
+import ReactMarkdown from 'react-markdown';
+import {Prism as SyntaxHighlighter} from 'react-syntax-highlighter'
+import {prism} from 'react-syntax-highlighter/dist/esm/styles/prism'
 
 interface Article {
   title: string;
+  ctime: string,
   content: string;
 }
 
@@ -31,16 +35,17 @@ function ArticalList() {
 
   return (
     <div className="App-body">
-      <div className="App-left">
+      <div className="App-list">
         {list.map((item, index) => (
-          <div key={index}>
-            <Link className="link-list-item" to={`/article/${item.title}`}>
+          <div className="link-list-item" key={index}>
+            <Link className="link-list-item-title" to={`/article/${item.title}`}>
               {item.title}
             </Link>
+            <div className="link-list-item-ctime">{item.ctime}</div>
           </div>
         ))}
       </div>
-      <div className="App-right">
+      <div className="App-introduction">
         {introduction}
       </div>
     </div>
@@ -71,7 +76,7 @@ function convertToHTML(str: string | null | undefined): string {
 
 function ArticleDetail() {
   const { title } = useParams<{ title: string }>(); // Define type for title as string
-  const [article, setArticle] = useState<Article>({ title: '', content: '' });
+  const [article, setArticle] = useState<Article>({ title: '', ctime:'', content: '' });
   const [error, setError] = useState<boolean>(false);
 
   useEffect(() => {
@@ -102,9 +107,33 @@ function ArticleDetail() {
 
   return (
     <div className="App-body">
-      <div className="App-left">
+      <div className="App-detail">
         <h2>{article.title}</h2>
-        <div dangerouslySetInnerHTML={{ __html: convertToHTML(article.content) }} />
+        <div>{article.ctime}</div>
+        <ReactMarkdown
+          components={{
+            code({ node, inline, className, children, ...props }: any) {
+              const match = /language-(\w+)/.exec(className || '');
+
+              return !inline && match ? (
+                <SyntaxHighlighter
+                  style={prism}
+                  PreTag="div"
+                  language={match[1]}
+                  {...props}
+                >
+                  {String(children).replace(/\n$/, '')}
+                </SyntaxHighlighter>
+              ) : (
+                <code className={className} {...props}>
+                  {children}
+                </code>
+              );
+            },
+          }}
+        >
+          {article.content}
+        </ReactMarkdown>
       </div>
     </div>
   );
@@ -128,8 +157,8 @@ function App() {
       </header>
       <BrowserRouter>
         <Routes>
-          <Route path="/article/:title" element={<ArticleDetail />} />
           <Route path="" element={<ArticalList />} />
+          <Route path="/article/:title" element={<ArticleDetail />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
