@@ -48,9 +48,10 @@ app.get('/sitemap.txt', async (req: Request, res: Response) => {
     }
 
     const data = await response.json() as ApiResponse; // Type assertion
-    const articleTitles = data.data.map(
+    let articleTitles = data.data.map(
       article => `${req.protocol}://${req.get('host')}/article/` + article.title
     ).join('\n');
+    articleTitles = `${req.protocol}://${req.get('host')}/\n` + articleTitles
     res.setHeader('Content-Type', 'text/plain');
     res.send(articleTitles);
   } catch (error) {
