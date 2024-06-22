@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link, BrowserRouter, Routes, Route, useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './App.css';
-import { header, introduction } from './staticData'; // Assuming staticData.js exports are TypeScript compatible
+import { header, introduction } from './staticData';
 import ReactMarkdown from 'react-markdown';
 import {Prism as SyntaxHighlighter} from 'react-syntax-highlighter'
 import {prism} from 'react-syntax-highlighter/dist/esm/styles/prism'
@@ -50,28 +50,6 @@ function ArticalList() {
       </div>
     </div>
   );
-}
-
-function convertToHTML(str: string | null | undefined): string {
-  if (!str) {
-    return "";
-  }
-
-  // Replace newline characters with <p> tags
-  const htmlString = str.replace(/\n/g, '</p><p>');
-
-  // Wrap the entire string with <p> tags
-  const wrappedHTML = `<p>${htmlString}</p>`;
-
-  // Add CSS to preserve leading spaces
-  const styledHTML = `<style>
-    p {
-      white-space: pre-wrap;
-    }
-  </style>
-  ${wrappedHTML}`;
-
-  return styledHTML;
 }
 
 function ArticleDetail() {
