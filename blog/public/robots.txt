@@ -1,4 +1,6 @@
 # https://www.robotstxt.org/robotstxt.html
 User-agent: *
+Allow: /
 Disallow:
-Sitemap: /sitemap.txt
+
+Sitemap: https://chasemao.com/sitemap.txt
