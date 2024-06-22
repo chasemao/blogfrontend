@@ -113,26 +113,20 @@ app.post('/api/article/get', async (req, res) => {
         res.status(500).json({ error: 'Error fetching data' });
     }
 });
-// Mock data endpoint (replace actual fetch request)
-// const mockData = [
-//   { id: 1, title: 'Article 1' },
-//   { id: 2, title: 'Article 2' },
-//   { id: 3, title: 'Article 3' },
-//   { id: 4, title: 'Article 4' }
-// ];
-// app.get('/api/v1/article/list', async (req: Request, res: Response) => {
-//   try {
-//     res.json(mockData);
-//   } catch (error) {
-//     console.error('Error fetching data:', error);
-//     res.status(500).json({ error: 'Error fetching data' });
-//   }
-// });
-// Upper code is for mock data when testing
 // Route all other requests to React app's index.html
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, 'blog/build', 'index.html'));
 });
-app.listen(port, () => {
-    console.log(`Server is running on http://localhost:${port}`);
-});
+// To access specific flags or arguments
+const flags = process.argv.slice(2); // Exclude 'node' and 'x.js'
+// In order to listen to localhost when test
+if (flags.length > 0) {
+    app.listen(port, flags[0], () => {
+        console.log(`Server is running on http://${flags[0]}:${port}`);
+    });
+}
+else {
+    app.listen(port, () => {
+        console.log(`Server is running on http://:${port}`);
+    });
+}

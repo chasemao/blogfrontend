@@ -108,7 +108,13 @@ function ArticleDetail() {
                   {String(children).replace(/\n$/, '')}
                 </SyntaxHighlighter>
               ) : (
-                <code className={className} {...props}>
+                <code
+                  className={className}
+                  style={{
+                    background: 'rgb(245, 242, 240)',
+                    padding: '5px',
+                  }}
+                  {...props}>
                   {children}
                 </code>
               );
