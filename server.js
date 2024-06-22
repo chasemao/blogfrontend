@@ -117,15 +117,16 @@ app.post('/api/article/get', async (req, res) => {
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, 'blog/build', 'index.html'));
 });
+
 // To access specific flags or arguments
 const flags = process.argv.slice(2); // Exclude 'node' and 'x.js'
+
 // In order to listen to localhost when test
 if (flags.length > 0) {
     app.listen(port, flags[0], () => {
         console.log(`Server is running on http://${flags[0]}:${port}`);
     });
-}
-else {
+} else {
     app.listen(port, () => {
         console.log(`Server is running on http://:${port}`);
     });
