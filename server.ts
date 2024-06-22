@@ -136,6 +136,6 @@ app.get('*', (req: Request, res: Response) => {
   res.sendFile(path.join(__dirname, 'blog/build', 'index.html'));
 });
 
-app.listen(port, () => {
+app.listen(port, 'localhost', () => {
   console.log(`Server is running on http://localhost:${port}`);
 });
