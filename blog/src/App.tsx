@@ -83,10 +83,15 @@ function ArticleDetail() {
     );
   }
 
+  if (!article || article.title === "") {
+    return null;
+  }
+
   return (
     <div className="App-body">
       <div className="App-detail">
-        <h2>{article.title}</h2>
+        <h1>{article.title}</h1>
+        <div>Chase Mao</div>
         <div>{article.ctime}</div>
         <ReactMarkdown
           components={{
