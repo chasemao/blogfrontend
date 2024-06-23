@@ -4,6 +4,8 @@ import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import fetch from 'node-fetch';
 import bodyParser from 'body-parser';
+import cluster from 'cluster';
+import { cpus } from 'os';
 
 const app = express();
 const port = 5000;
@@ -137,18 +139,32 @@ app.get('*', (req: Request, res: Response) => {
 });
 
 
-// To access specific flags or arguments
-const flags = process.argv.slice(2); // Exclude 'node' and 'x.js'
+if (cluster.isPrimary) {
+  console.log(`Primary ${process.pid} is running`);
 
-// In order to listen to localhost when test
-if (flags.length > 0) {
-  app.listen(port, flags[0], () => {
-    console.log(`Server is running on http://${flags[0]}:${port}`);
+  // Fork workers
+  const numCPUs = cpus().length;
+  for (let i = 0; i < numCPUs; i++) {
+    cluster.fork();
+  }
+
+  cluster.on('exit', (worker, code, signal) => {
+    console.log(`Worker ${worker.process.pid} died`);
   });
 } else {
-  app.listen(port, () => {
-    console.log(`Server is running on http://:${port}`);
-  });
+  console.log(`Worker ${process.pid} started`);
+
+  // To access specific flags or arguments
+  const flags = process.argv.slice(2); // Exclude 'node' and 'x.js'
+
+  // In order to listen to localhost when test
+  if (flags.length > 0) {
+    app.listen(port, flags[0], () => {
+      console.log(`Server is running on http://${flags[0]}:${port}`);
+    });
+  } else {
+    app.listen(port, () => {
+      console.log(`Server is running on http://:${port}`);
+    });
+  }
 }
-
-
