@@ -6,6 +6,7 @@ import { header, introduction } from './staticData';
 import ReactMarkdown from 'react-markdown';
 import {Prism as SyntaxHighlighter} from 'react-syntax-highlighter'
 import {prism} from 'react-syntax-highlighter/dist/esm/styles/prism'
+import remarkGfm from "remark-gfm";
 
 interface Article {
   title: string;
@@ -94,6 +95,8 @@ function ArticleDetail() {
         <div>Chase Mao</div>
         <div>{article.ctime}</div>
         <ReactMarkdown
+          className="markdown"
+          remarkPlugins={[remarkGfm]}
           components={{
             code({ node, inline, className, children, ...props }: any) {
               const match = /language-(\w+)/.exec(className || '');
