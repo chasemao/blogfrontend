@@ -88,6 +88,8 @@ function ArticleDetail() {
     return null;
   }
 
+  document.title = article.title;
+
   return (
     <div className="App-body">
       <div className="App-detail">
