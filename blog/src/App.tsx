@@ -47,6 +47,9 @@ function ArticalList() {
         ))}
       </div>
       <div className="App-introduction">
+          <a href="https://www.linkedin.com/in/chase-mao" target="_blank">
+            <img src="/linkedin.ico" style={{ width: '20px', height: '20px'}} />
+          </a>
         {introduction}
       </div>
     </div>
