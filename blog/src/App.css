@@ -29,6 +29,14 @@
   text-align: left; /* Align text to the left */
   line-height: 2; /* Double line spacing */
   border-left: 1px dotted #000;
+  a img{
+    width: 20px;
+    height: 20px;
+    margin-left: 10px;
+  }
+  a:first-of-type img {
+    margin-left: 0;
+  }
 }
 
 .App-detail {
