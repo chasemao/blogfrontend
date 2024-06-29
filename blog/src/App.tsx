@@ -7,6 +7,8 @@ import ReactMarkdown from 'react-markdown';
 import {Prism as SyntaxHighlighter} from 'react-syntax-highlighter'
 import {prism} from 'react-syntax-highlighter/dist/esm/styles/prism'
 import remarkGfm from "remark-gfm";
+import remarkToc from 'remark-toc';
+import rehypeSlug from 'rehype-slug';
 
 interface Article {
   title: string;
@@ -101,9 +103,10 @@ function ArticleDetail() {
         <div>{article.ctime}</div>
         <ReactMarkdown
           className="markdown"
-          remarkPlugins={[remarkGfm]}
+          remarkPlugins={[remarkGfm, remarkToc]}
+          rehypePlugins={[rehypeSlug]}
           components={{
-            code({ node, inline, className, children, ...props }: any) {
+            code: ({ node, inline, className, children, ...props }: any) => {
               const match = /language-(\w+)/.exec(className || '');
 
               return !inline && match ? (
@@ -135,6 +138,13 @@ function ArticleDetail() {
     </div>
   );
 }
+
+const generateId = (children: React.ReactNode | undefined) => {
+  if (!children || typeof children !== 'string') {
+    return '';
+  }
+  return children[0].toLowerCase().replace(/\s+/g, '-');
+};
 
 function NotFound() {
   return (
