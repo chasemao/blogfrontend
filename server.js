@@ -12,11 +12,17 @@ const port = 5000;
 app.use(bodyParser.json());
 // Middleware to log request
 app.use((req, res, next) => {
-    const now = new Date();
-    const localTime = now.toLocaleString('en-US', { timeZone: 'Asia/Shanghai' });
-    const milliseconds = now.getMilliseconds().toString().padStart(3, '0');
-    console.log(`[${localTime}.${milliseconds}] ${req.method} ${req.path}`);
+    const recv = getTime();
     next();
+    const ret = getTime();
+    console.log(`[${recv}] ${req.method} ${req.path} [${ret}] ${res.statusCode}`);
+    function getTime() {
+        const now = new Date();
+        const localTime = now.toLocaleString('en-US', { timeZone: 'Asia/Shanghai' });
+        const milliseconds = now.getMilliseconds().toString().padStart(3, '0');
+        const timestamp = `${localTime}.${milliseconds}`;
+        return timestamp;
+    }
 });
 // Serve static files from the React app
 const __filename = fileURLToPath(import.meta.url);

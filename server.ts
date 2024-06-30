@@ -6,6 +6,7 @@ import fetch from 'node-fetch';
 import bodyParser from 'body-parser';
 import cluster from 'cluster';
 import { cpus } from 'os';
+import { timeStamp } from 'console';
 
 const app = express();
 const port = 5000;
@@ -25,11 +26,18 @@ app.use(bodyParser.json());
 
 // Middleware to log request
 app.use((req: Request, res: Response, next: NextFunction) => {
-  const now = new Date();
-  const localTime = now.toLocaleString('en-US', { timeZone: 'Asia/Shanghai' });
-  const milliseconds = now.getMilliseconds().toString().padStart(3, '0');
-  console.log(`[${localTime}.${milliseconds}] ${req.method} ${req.path}`);
+  const recv = getTime();
   next();
+  const ret = getTime();
+  console.log(`[${recv}] ${req.method} ${req.path} [${ret}] ${res.statusCode}`);
+
+  function getTime() {
+    const now = new Date();
+    const localTime = now.toLocaleString('en-US', { timeZone: 'Asia/Shanghai' });
+    const milliseconds = now.getMilliseconds().toString().padStart(3, '0');
+    const timestamp = `${localTime}.${milliseconds}`;
+    return timestamp;
+  }
 });
 
 // Serve static files from the React app
