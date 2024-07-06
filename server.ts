@@ -7,6 +7,7 @@ import bodyParser from 'body-parser';
 import cluster from 'cluster';
 import { cpus } from 'os';
 import { timeStamp } from 'console';
+import { parseCommandLine } from 'typescript';
 
 const app = express();
 const port = 5000;
@@ -139,6 +140,16 @@ app.post('/api/article/get', async (req: Request, res: Response) => {
     console.error('Error fetching data:', error);
     res.status(500).json({ error: 'Error fetching data' });
   }
+});
+
+// If there is blank in title redirect it to replace blank with dash
+// "/article/a b c" ->"/article/a-b-c"
+app.get('/article/:title', (req: Request, res: Response) => {
+  const title = req.params.title;
+  if (title.includes(" ")) {
+    res.redirect('/article/'+title.replace(/ /g, "-"))
+  }
+  res.sendFile(path.join(__dirname, 'blog/build', 'index.html'));
 });
 
 // Route all other requests to React app's index.html

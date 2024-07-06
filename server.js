@@ -121,6 +121,15 @@ app.post('/api/article/get', async (req, res) => {
         res.status(500).json({ error: 'Error fetching data' });
     }
 });
+// If there is blank in title redirect it to replace blank with dash
+// "/article/a b c" ->"/article/a-b-c"
+app.get('/article/:title', (req, res) => {
+    const title = req.params.title;
+    if (title.includes(" ")) {
+        res.redirect('/article/' + title.replace(/ /g, "-"));
+    }
+    res.sendFile(path.join(__dirname, 'blog/build', 'index.html'));
+});
 // Route all other requests to React app's index.html
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, 'blog/build', 'index.html'));

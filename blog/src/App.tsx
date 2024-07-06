@@ -41,7 +41,7 @@ function ArticalList() {
       <div className="App-list">
         {list.map((item, index) => (
           <div className="link-list-item" key={index}>
-            <Link className="link-list-item-title" to={`/article/${item.title}`}>
+            <Link className="link-list-item-title" to={`/article/${item.title.replace(/ /g, "-")}`}>
               {item.title}
             </Link>
             <div className="link-list-item-ctime">{item.ctime}</div>
@@ -62,7 +62,11 @@ function ArticalList() {
 }
 
 function ArticleDetail() {
-  const { title } = useParams<{ title: string }>(); // Define type for title as string
+  var { title } = useParams<{ title: string }>(); // Define type for title as string
+  if (!title) {
+    title = ""
+  }
+  title = title.replace(/-/g, " ")
   const [article, setArticle] = useState<Article>({ title: '', ctime:'', content: '' });
   const [error, setError] = useState<boolean>(false);
 
