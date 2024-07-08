@@ -9,12 +9,31 @@ import {prism} from 'react-syntax-highlighter/dist/esm/styles/prism'
 import remarkGfm from "remark-gfm";
 import remarkToc from 'remark-toc';
 import rehypeSlug from 'rehype-slug';
+import { Helmet } from 'react-helmet';
 
 interface Article {
   title: string;
   ctime: string,
   content: string;
 }
+
+function GoogleAnalytics() {
+  return (
+    <Helmet>
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-F6K80FT3TZ"></script>
+      <script>
+        {`
+          window.dataLayer = window.dataLayer || [];
+          function gtag() {
+            window.dataLayer.push(arguments);
+          }
+          gtag('js', new Date());
+          gtag('config', 'G-F6K80FT3TZ');
+        `}
+      </script>
+    </Helmet>
+  );
+};
 
 function ArticalList() {
   const [list, setList] = useState<Article[]>([]);
@@ -37,39 +56,46 @@ function ArticalList() {
   }, []);
 
   return (
-    <div className="App-body">
-      <div className="App-list">
-        {list.map((item, index) => (
-          <div className="link-list-item" key={index}>
-            <Link className="link-list-item-title" to={`/article/${item.title.replace(/ /g, "-")}`}>
-              {item.title}
-            </Link>
-            <div className="link-list-item-ctime">{item.ctime}</div>
-          </div>
-        ))}
+    <>
+      <GoogleAnalytics/>
+      <div className="App-body">
+        <div className="App-list">
+          {list.map((item, index) => (
+            <div className="link-list-item" key={index}>
+              <Link className="link-list-item-title" to={`/article/${item.title.replace(/ /g, "-")}`}>
+                {item.title}
+              </Link>
+              <div className="link-list-item-ctime">{item.ctime}</div>
+            </div>
+          ))}
+        </div>
+        <div className="App-introduction">
+            <a href="https://www.linkedin.com/in/chase-mao" target="_blank">
+              <img src="/linkedin.ico" />
+            </a>
+            <a href="https://github.com/chasemao" target="_blank">
+              <img src="/git.ico" />
+            </a>
+          {introduction}
+        </div>
       </div>
-      <div className="App-introduction">
-          <a href="https://www.linkedin.com/in/chase-mao" target="_blank">
-            <img src="/linkedin.ico" />
-          </a>
-          <a href="https://github.com/chasemao" target="_blank">
-            <img src="/git.ico" />
-          </a>
-        {introduction}
-      </div>
-    </div>
+    </>
   );
 }
 
 function ArticleDetail() {
-  var { title } = useParams<{ title: string }>(); // Define type for title as string
+  // Format title, replace "-" with " "
+  var { title } = useParams<{ title: string }>();
   if (!title) {
     title = ""
   }
   title = title.replace(/-/g, " ")
+
+  // Set default value for article
   const [article, setArticle] = useState<Article>({ title: '', ctime:'', content: '' });
   const [error, setError] = useState<boolean>(false);
 
+  // Fetch article content
   useEffect(() => {
     axios.post<{ code: number; data: Article }>('/api/article/get', {
       title: title,
@@ -90,59 +116,66 @@ function ArticleDetail() {
       });
   }, [title]);
 
+  // If error then redirect to 404
   if (error) {
     return (
       <RedirectToNotFound />
     );
   }
 
+  // When no article, render none
   if (!article || article.title === "") {
     return null;
   }
 
-  document.title = article.title;
-
+  // Normal render
   return (
-    <div className="App-body">
-      <div className="App-detail">
-        <h1>{article.title}</h1>
-        <div>Chase Mao</div>
-        <div>{article.ctime}</div>
-        <ReactMarkdown
-          className="markdown"
-          remarkPlugins={[remarkGfm, remarkToc]}
-          rehypePlugins={[rehypeSlug]}
-          components={{
-            code: ({ node, inline, className, children, ...props }: any) => {
-              const match = /language-(\w+)/.exec(className || '');
+    <>
+      <Helmet>
+        <title>{article.title}</title>
+      </Helmet>
+      <GoogleAnalytics/>
+      <div className="App-body">
+        <div className="App-detail">
+          <h1>{article.title}</h1>
+          <div>Chase Mao</div>
+          <div>{article.ctime}</div>
+          <ReactMarkdown
+            className="markdown"
+            remarkPlugins={[remarkGfm, remarkToc]}
+            rehypePlugins={[rehypeSlug]}
+            components={{
+              code: ({ node, inline, className, children, ...props }: any) => {
+                const match = /language-(\w+)/.exec(className || '');
 
-              return !inline && match ? (
-                <SyntaxHighlighter
-                  style={prism}
-                  PreTag="div"
-                  language={match[1]}
-                  {...props}
-                >
-                  {String(children).replace(/\n$/, '')}
-                </SyntaxHighlighter>
-              ) : (
-                <code
-                  className={className}
-                  style={{
-                    background: 'rgb(245, 242, 240)',
-                    padding: '5px',
-                  }}
-                  {...props}>
-                  {children}
-                </code>
-              );
-            },
-          }}
-        >
-          {article.content}
-        </ReactMarkdown>
+                return !inline && match ? (
+                  <SyntaxHighlighter
+                    style={prism}
+                    PreTag="div"
+                    language={match[1]}
+                    {...props}
+                  >
+                    {String(children).replace(/\n$/, '')}
+                  </SyntaxHighlighter>
+                ) : (
+                  <code
+                    className={className}
+                    style={{
+                      background: 'rgb(245, 242, 240)',
+                      padding: '5px',
+                    }}
+                    {...props}>
+                    {children}
+                  </code>
+                );
+              },
+            }}
+          >
+            {article.content}
+          </ReactMarkdown>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 
