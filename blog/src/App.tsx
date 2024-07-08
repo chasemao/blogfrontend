@@ -188,9 +188,15 @@ const generateId = (children: React.ReactNode | undefined) => {
 
 function NotFound() {
   return (
-    <div className="not-found">
-      Page not found <a href='/'>back to front page</a>
-    </div>
+    <>
+      <Helmet>
+        <title>404 NOT FOUND</title>
+      </Helmet>
+      <GoogleAnalytics/>
+      <div className="not-found">
+        Page not found <a href='/'>back to front page</a>
+      </div>
+    </>
   )
 }
 
