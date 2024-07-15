@@ -60,7 +60,7 @@ app.get('/sitemap.txt', async (req: Request, res: Response) => {
 
     const data = await response.json() as ApiResponse; // Type assertion
     let articleTitles = data.data.map(
-      article => `https://${req.get('host')}/article/` + article.title
+      article => `https://${req.get('host')}/article/` + article.title.replace(/ /g, "-")
     ).join('\n');
     articleTitles = `https://${req.get('host')}/\n` + articleTitles
     res.setHeader('Content-Type', 'text/plain');

@@ -40,7 +40,7 @@ app.get('/sitemap.txt', async (req, res) => {
             throw new Error('Failed to fetch data');
         }
         const data = await response.json(); // Type assertion
-        let articleTitles = data.data.map(article => `https://${req.get('host')}/article/` + article.title).join('\n');
+        let articleTitles = data.data.map(article => `https://${req.get('host')}/article/` + article.title.replace(/ /g, "-")).join('\n');
         articleTitles = `https://${req.get('host')}/\n` + articleTitles;
         res.setHeader('Content-Type', 'text/plain');
         res.send(articleTitles);
